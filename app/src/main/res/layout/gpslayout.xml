@@ -1,6 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+    <TextView
+        android:text="GPS Inactive"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textrack"
+        />
+    />
+    <TextView
+        android:text="Current speed: "
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/currs"
+        />
+    />
+    <TextView
+        android:text="Average speed: "
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/avgs"
+        />
+    />
+    <TextView
+        android:text="Overall time: "
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/time"
+        />
+    />
+    <Button
+    android:text="Start Tracking"
+    android:id="@+id/buttont"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    />
 
-</LinearLayout>
+
+</merge>
