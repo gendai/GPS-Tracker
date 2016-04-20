@@ -14,6 +14,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class MainActivity extends Activity {
 
     Button track;
@@ -23,7 +27,8 @@ public class MainActivity extends Activity {
     TextView textt;
     LocationListener locationListener;
     String locationProvider = LocationManager.GPS_PROVIDER;
-
+    Timer task = new Timer();
+    ArrayList<Location> locations = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,33 +41,42 @@ public class MainActivity extends Activity {
         locationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
                 Log.d("DEBUG",location.toString());
+                if(locations.size() == 100) {
+                    locations.remove(0);
+                }
+                    locations.add(location);
                 //makeUseOfNewLocation(location);
             }
             public void onStatusChanged(String provider, int status, Bundle extras) {
                 Log.d("DEBUG","changed");}
 
             public void onProviderEnabled(String provider) {
-                Log.d("DEBUG",locationProvider);
+                Log.d("DEBUG",locationProvider.toString());
             }
 
             public void onProviderDisabled(String provider) {}
+
+
         };
         track.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(activated){
+                if (activated) {
                     activated = !activated;
                     textt.setText("GPS Inactive");
                     track.setText("Start Tracking");
-                    //locationManager.removeUpdates(locationListener);
-                }else{
+                    locationManager.removeUpdates(locationListener);
+                    task.cancel();
+                } else {
                     activated = !activated;
                     textt.setText("GPS Active");
                     track.setText("Stop Tracking");
-                    //locationManager.requestLocationUpdates(locationProvider, 0, 0, locationListener);
+                    locationManager.requestLocationUpdates(locationProvider, 1000, 0, locationListener);
+                    //ExecLoc();
                 }
             }
         });
+
         /*mock.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -70,6 +84,19 @@ public class MainActivity extends Activity {
             }
 
             });*/
+    }
+
+    private void ExecLoc(){
+        this.runOnUiThread(new Runnable() {
+            public void run() {
+                task.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        locationManager.requestLocationUpdates(locationProvider, 0, 0, locationListener);
+                    }
+                }, 1, 1);
+            }
+        });
     }
 
     private void getMockLocation()
