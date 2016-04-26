@@ -3,9 +3,14 @@ package com.example.english.gps_tracker;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class CustomView extends LinearLayout {
+
 
     public CustomView(Context context) {
         super(context);
@@ -22,7 +27,9 @@ public class CustomView extends LinearLayout {
         init();
     }
 
-    public void init(){
+    public void init() {
         inflate(getContext(), R.layout.gpslayout, this);
+
     }
+
 }

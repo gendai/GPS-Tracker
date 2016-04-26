@@ -25,11 +25,18 @@ public class MainActivity extends Activity {
     LocationManager locationManager;
     Boolean activated = false;
     TextView textt;
+    TextView currspeed;
+    TextView averags;
+    Timer task = new Timer();
+    TextView time;
+    int timer = 0;
+
     LocationListener locationListener;
     String locationProvider = LocationManager.GPS_PROVIDER;
-    Timer task = new Timer();
+    //Timer task = new Timer();
     ArrayList<Location> locations = new ArrayList<>();
     GraphView grpahv;
+    CustomView cv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +44,10 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         grpahv = (GraphView)findViewById(R.id.graph);
         track = (Button)findViewById(R.id.buttont);
+        currspeed = (TextView)findViewById(R.id.currs);
+        averags = (TextView)findViewById(R.id.avgs);
+        cv = (CustomView)findViewById(R.id.custom);
+        time = (TextView)findViewById(R.id.time);
        // mock = (Button)findViewById(R.id.mock);
         textt = (TextView)findViewById(R.id.textrack);
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
@@ -49,6 +60,8 @@ public class MainActivity extends Activity {
                 }
                 locations.add(location);
                 grpahv.setLocations(locations);
+                currspeed.setText("Current speed: " + Float.toString(location.getSpeed() * 3.6f) + " km/h");
+                averags.setText("Average speed: "+Float.toString(getAverage())+" km/h");
                 //makeUseOfNewLocation(location);
             }
             public void onStatusChanged(String provider, int status, Bundle extras) {
@@ -71,13 +84,14 @@ public class MainActivity extends Activity {
                     track.setText("Start Tracking");
                     locationManager.removeUpdates(locationListener);
                     task.cancel();
+                    timer = 0;
                 } else {
                     activated = !activated;
                     textt.setText("GPS Active");
                     track.setText("Stop Tracking");
                     locationManager.requestLocationUpdates(locationProvider, 1000, 0, locationListener);
                     grpahv.invalidate();
-                    //ExecLoc();
+                    ExecLoc();
                 }
             }
         });
@@ -91,17 +105,32 @@ public class MainActivity extends Activity {
             });*/
     }
 
+    private float getAverage(){
+        float sum = 0;
+        for(Location loc : locations){
+            sum += loc.getSpeed() * 3.6f;
+        }
+        return sum / (float)locations.size();
+    }
+
     private void ExecLoc(){
-        this.runOnUiThread(new Runnable() {
+        task = new Timer();
+        task.schedule(new TimerTask() {
+            @Override
             public void run() {
-                task.schedule(new TimerTask() {
+                // Your logic here...
+
+                // When you need to modify a UI element, do so on the UI thread.
+                // 'getActivity()' is required as this is being ran from a Fragment.
+               runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        locationManager.requestLocationUpdates(locationProvider, 0, 0, locationListener);
+                        time.setText("Overall time: "+timer+" s");
+                        timer++;
                     }
-                }, 1, 1);
+                });
             }
-        });
+        }, 0, 1000);
     }
 
     private void getMockLocation()
