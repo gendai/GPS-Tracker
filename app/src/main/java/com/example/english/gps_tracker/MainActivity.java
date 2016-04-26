@@ -29,22 +29,26 @@ public class MainActivity extends Activity {
     String locationProvider = LocationManager.GPS_PROVIDER;
     Timer task = new Timer();
     ArrayList<Location> locations = new ArrayList<>();
+    GraphView grpahv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        grpahv = (GraphView)findViewById(R.id.graph);
         track = (Button)findViewById(R.id.buttont);
        // mock = (Button)findViewById(R.id.mock);
         textt = (TextView)findViewById(R.id.textrack);
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         locationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
-                Log.d("DEBUG",location.toString());
+                //Log.d("DEBUG",location.toString());
                 if(locations.size() == 100) {
                     locations.remove(0);
+                    Log.d("Debug","We hit 100");
                 }
-                    locations.add(location);
+                locations.add(location);
+                grpahv.setLocations(locations);
                 //makeUseOfNewLocation(location);
             }
             public void onStatusChanged(String provider, int status, Bundle extras) {
@@ -72,6 +76,7 @@ public class MainActivity extends Activity {
                     textt.setText("GPS Active");
                     track.setText("Stop Tracking");
                     locationManager.requestLocationUpdates(locationProvider, 1000, 0, locationListener);
+                    grpahv.invalidate();
                     //ExecLoc();
                 }
             }
